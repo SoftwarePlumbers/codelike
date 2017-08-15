@@ -16,8 +16,8 @@ const log = logger.getLogger('codelike');
 /** Need a safe tostring because we are playing with proxies */
 function _string(a) {
     if (typeof a === 'symbol') return 'symbol';
-    if (a.__target) return `proxy(${a.__target})`;
-    return a.toString();
+    if (a && a.__target) return `proxy(${a.__target})`;
+    return a;
 }
 
 
@@ -199,9 +199,7 @@ class Builder extends AccessorElement {
             this[visitor.name] = element => Builder.apply(visitor, element);
     }
 
-    static create(name, visitors) {
-        return wrap(new Builder(name, visitors));
-    }
+    get builder() { return wrap(this); }
 }
 
 module.exports = Builder;

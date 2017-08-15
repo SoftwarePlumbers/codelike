@@ -7,7 +7,8 @@ const log = logger.getLogger('tests');
 
 const expect = chai.expect;
 
-const Action = Builder.create('Action', []);
+const ActionBuilder = new Builder('Action', []);
+const Action = ActionBuilder.builder;
 
 it('Can create action chain and convert to string', () => {
     let action = Action.abc.def.ghi(123,456);
