@@ -2,7 +2,7 @@
 
 Codelike is a utility for creating code-like obects in javascript. For example:
 
-```
+```javascript
 import Codelike from codelike;
 
 const codelike = new Codelike('Action', []);
@@ -51,6 +51,6 @@ This formatter object will output the code in an entirely different syntax. To u
 
 ```javascript
 const codelike = new Codelike('MyAction', [ myOwnStringify ]);
+```
 
 then codelike.myOwnStringify(action) will return a formatted string (or any other type of object) to your own requirements as formatted by myOwnStringify.
-```
