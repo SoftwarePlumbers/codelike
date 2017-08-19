@@ -1,6 +1,6 @@
 const chai = require('chai');
 const logger = require('simple-console-logger');
-const Builder =require('./codelike');
+const Builder =require('../codelike');
 
 const log = logger.getLogger('tests');
 
