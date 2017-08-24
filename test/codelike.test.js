@@ -20,6 +20,12 @@ it('Can create filters', () => {
     expect(Action.stringify(action)).to.equal("Action.abc.$find(() => false)");
 });
 
+it('Can chain filters', () => {
+    const filter = () => false;
+    let action = Action.abc.$find(filter).doit(99);
+    expect(action).to.exist;
+    expect(Action.stringify(action)).to.equal("Action.abc.$find(() => false).doit(99)");
+});
 
 it('Convert then to string', () => {
     let action = Action.abc().when(Action.def);

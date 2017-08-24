@@ -13,8 +13,8 @@ const debug = require('debug')('codelike');
 /** Need a safe tostring because we are playing with proxies */
 function _string(a) {
     if (typeof a === 'symbol') return 'symbol';
-    if (a && a.__target) return `proxy(${a.__target})`;
-    return a;
+    if (a && a.__target) return `proxy(${JSON.stringify(a.__target)})`;
+    return JSON.stringify(a);
 }
 
 
@@ -83,6 +83,9 @@ class AccessorElement {
 
 class SequentialAction extends BaseAction {
     constructor(first, then) {
+        // Unwrap arguments if they are proxied.
+        first = first.__target || first;
+        then = then.__target || then;
         console.assert(first instanceof BaseAction, `${_string(first)} should be an Action`);
         console.assert(then instanceof BaseAction, `${_string(then)} should be an Action`);
         super();
@@ -96,6 +99,8 @@ class SequentialAction extends BaseAction {
 
 class ConditionalAction extends BaseAction {
     constructor(action, condition) {
+        // Unwrap arguments if they are proxied
+        action = action.__target || action;
         condition = condition.__target || condition;
         debug('ConditionalAction - constructor', _string(action), _string(condition));
         console.assert(action instanceof BaseAction, `${_string(action)} should be an Action`);
@@ -114,7 +119,7 @@ class GetterAction extends AccessorElement {
 
     constructor(first, name) {
         debug("GetterAction - constructor", _string(first), _string(name));
-        console.assert(first instanceof AccessorElement, `${_string(first)} should be an Accessor`);
+        console.assert(first instanceof AccessorElement || first instanceof BaseAction, `${_string(first)} should be an AccessorElement or a BaseAction`);
         console.assert(typeof name === 'string', `${_string(name)} should be an string`);
         super();
         this.first = first;
@@ -132,7 +137,7 @@ class MethodCallAction extends BaseAction {
     
     constructor(accessor, name, parameters) {
         debug('MethodCallAction - constructor', _string(accessor), _string(name), _string(parameters));
-        console.assert(accessor instanceof AccessorElement, `${_string(accessor)} should be an AccessorElement`);
+        console.assert(accessor instanceof AccessorElement || accessor instanceof BaseAction, `${_string(accessor)} should be an AccessorElement or a BaseAction`);
         console.assert(typeof name === 'string', `${_string(name)} should be a string`);
         console.assert(parameters instanceof Array, `${_string(parameters)} should be an array`);
         super();
@@ -172,7 +177,7 @@ const HANDLER = {
 
     apply: (target, thisArg, arglist) => {
         target = unwrap(target);
-        return new MethodCallAction(target.first, target.name, arglist); 
+        return wrap(new MethodCallAction(target.first, target.name, arglist)); 
     }
 }
 
