@@ -1,9 +1,6 @@
 const chai = require('chai');
-const logger = require('simple-console-logger');
+const debug = require('debug')('codelike~tests');
 const Builder =require('../codelike');
-
-const log = logger.getLogger('tests');
-
 
 const expect = chai.expect;
 

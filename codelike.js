@@ -8,10 +8,7 @@
  * See the unit tests for examples.
  */
 
-const logger = require('simple-console-logger');
-
-const log = logger.getLogger('codelike');
-
+const debug = require('debug')('codelike');
 
 /** Need a safe tostring because we are playing with proxies */
 function _string(a) {
@@ -69,12 +66,12 @@ class ActionException extends Error {
 class BaseAction {
 
     then(next) {
-        log.trace('then', _string(next));
+        debug('then', _string(next));
         return new SequentialAction(this, next);
     }
 
     when(condition) {
-        log.trace('when', _string(condition));
+        debug('when', _string(condition));
         return new ConditionalAction(this, condition);
     }
 }
@@ -100,7 +97,7 @@ class SequentialAction extends BaseAction {
 class ConditionalAction extends BaseAction {
     constructor(action, condition) {
         condition = condition.__target || condition;
-        log.trace('ConditionalAction - constructor', _string(action), _string(condition));
+        debug('ConditionalAction - constructor', _string(action), _string(condition));
         console.assert(action instanceof BaseAction, `${_string(action)} should be an Action`);
         console.assert(condition instanceof AccessorElement, `${_string(condition)} should be an accessor`);
         super();
@@ -116,7 +113,7 @@ class ConditionalAction extends BaseAction {
 class GetterAction extends AccessorElement {
 
     constructor(first, name) {
-        log.trace("GetterAction - constructor", _string(first), _string(name));
+        debug("GetterAction - constructor", _string(first), _string(name));
         console.assert(first instanceof AccessorElement, `${_string(first)} should be an Accessor`);
         console.assert(typeof name === 'string', `${_string(name)} should be an string`);
         super();
@@ -134,7 +131,7 @@ class MethodCallAction extends BaseAction {
 
     
     constructor(accessor, name, parameters) {
-        log.trace('MethodCallAction - constructor', _string(accessor), _string(name), _string(parameters));
+        debug('MethodCallAction - constructor', _string(accessor), _string(name), _string(parameters));
         console.assert(accessor instanceof AccessorElement, `${_string(accessor)} should be an AccessorElement`);
         console.assert(typeof name === 'string', `${_string(name)} should be a string`);
         console.assert(parameters instanceof Array, `${_string(parameters)} should be an array`);
@@ -167,7 +164,7 @@ const HANDLER = {
         let real_property = target[val]; 
         if (real_property === undefined) return wrap(new GetterAction(target, val)); 
         if (typeof real_property === 'function') {
-            log.trace('Action - HANDLER.get', real_property.name);
+            debug('Action - HANDLER.get', real_property.name);
             return real_property.bind(target);
         }
         return real_property;
