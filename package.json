@@ -1,6 +1,6 @@
 {
   "name": "codelike",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Utility for creating codelike objects in javascript",
   "main": "index.js",
   "scripts": {
@@ -30,6 +30,6 @@
     "mocha": "^3.5.0"
   },
   "dependencies": {
-    "simple-console-logger": "^2.0.2"
+    "debug": "^3.0.0"
   }
 }
